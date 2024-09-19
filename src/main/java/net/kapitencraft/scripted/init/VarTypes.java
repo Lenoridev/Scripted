@@ -1,9 +1,7 @@
 package net.kapitencraft.scripted.init;
 
 import net.kapitencraft.scripted.Scripted;
-import net.kapitencraft.scripted.code.var.type.BlockStateType;
-import net.kapitencraft.scripted.code.var.type.ItemStackType;
-import net.kapitencraft.scripted.code.var.type.LevelType;
+import net.kapitencraft.scripted.code.var.type.*;
 import net.kapitencraft.scripted.code.var.type.abstracts.VarType;
 import net.kapitencraft.scripted.code.var.type.data.DataStorageType;
 import net.kapitencraft.scripted.code.var.type.entity.EntityType;
@@ -17,15 +15,27 @@ import net.kapitencraft.scripted.init.custom.ModRegistryKeys;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public interface VarTypes {
     DeferredRegister<VarType<?>> REGISTRY = Scripted.createRegistry(ModRegistryKeys.VAR_TYPES);
 
-    private static <I, T extends VarType<I>> RegistryObject<T> register(String name, Supplier<T> register) {
+
+    static <I, T extends VarType<I>> RegistryObject<T> register(String name, Supplier<T> register) {
         return REGISTRY.register(name, register);
+    }
+
+    static void registerCustom() {
+        for (CustomVarType customVarType : VarType.CLASS_MAP) {
+            RegistryObject obj = register(customVarType.name, TypeRegister.registerVarType(customVarType.clazz, customVarType.add, customVarType.mul, customVarType.div, customVarType.sub, customVarType.mod, customVarType.com)::new)
+        }
     }
 
     //special
